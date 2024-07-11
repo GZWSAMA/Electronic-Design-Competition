@@ -27,21 +27,26 @@ def order_points(pts):
     # 返回排序后的坐标点
     return rect
 
-def find_contours(image):
+def warp_image(image, commond='warp'):
     """
     寻找轮廓
     :param image: 待处理的图片
     :return: 透视变换后的图片
     """
-
     # 转为灰度图
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # 二值化处理，将图像转换为黑白
     _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
+    # 高斯模糊减少噪声
+    blurred = cv2.GaussianBlur(image, (3, 3), 0)
+
+    # 边缘检测，降低阈值以捕获更多细节
+    edges = cv2.Canny(blurred, 50, 150)
+
     # 寻找轮廓
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # 遍历所有轮廓
     for contour in contours:
@@ -66,12 +71,18 @@ def find_contours(image):
             heightB = np.sqrt(((box[1][0] - box[2][0]) ** 2) + ((box[1][1] - box[2][1]) ** 2))
             maxHeight = max(int(heightA), int(heightB))
 
-            # 根据原始四边形的宽度和高度定义目标点
+            # 定义目标点，这里我们增加一些额外的空间，但要确保比例正确
+            # 假设你想在每个边上增加10%的空间
+            extraSpace = -0.05  # 5% extra space
+            dst_width = maxWidth * (1 + 2 * extraSpace)
+            dst_height = maxHeight * (1 + 2 * extraSpace)
+
+            # 重新计算目标点
             dst_pts = np.array([
-                [0, 0],
-                [maxWidth - 1, 0],
-                [maxWidth - 1, maxHeight - 1],
-                [0, maxHeight - 1]
+                [0 - maxWidth * extraSpace, 0 - maxHeight * extraSpace],
+                [maxWidth + maxWidth * extraSpace, 0 - maxHeight * extraSpace],
+                [maxWidth + maxWidth * extraSpace, maxHeight + maxHeight * extraSpace],
+                [0 - maxWidth * extraSpace, maxHeight + maxHeight * extraSpace]
             ], dtype="float32")
 
             # 计算透视变换矩阵
@@ -80,16 +91,68 @@ def find_contours(image):
             # 执行透视变换
             warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
 
+
             #绘制轮廓
-            cv2.drawContours(image, [approx], 0, (0, 255, 0), 2)
+            cv2.drawContours(image, [approx], 0, (255, 0, 0), 2)
     
     # 显示结果
+    # cv2.imshow('thresh Image', thresh)
     cv2.imshow('Detected Rectangles', image)
     cv2.imshow("Warped", warped)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    
     return warped
+
+def find_rec(image):
+    """
+    寻找四边形顶点位置
+    :param image: 待处理的图片
+    :return: 所有四边形顶点位置列表
+    """
+    locations = []
+    # 转为灰度图
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # 二值化处理，将图像转换为黑白
+    _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+
+    # 高斯模糊减少噪声
+    blurred = cv2.GaussianBlur(image, (3, 3), 0)
+
+    # 边缘检测，降低阈值以捕获更多细节
+    edges = cv2.Canny(blurred, 50, 150)
+
+    # 寻找轮廓
+    contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+    # 遍历所有轮廓
+    for i, contour in enumerate(contours):
+        # 近似轮廓，减少顶点数量
+        epsilon = 0.01 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+        
+        # 如果轮廓近似后有4个顶点，且面积大于某个阈值，则认为是矩形
+        if len(approx) == 4 and cv2.contourArea(contour) > 1000:
+            # 获取四边形的四个顶点坐标
+            box = approx.reshape(4, 2).astype("float32")
+
+            # 重新排序顶点
+            box = order_points(box)
+
+            #将检测到的四边形的四个顶点坐标存储到lacations列表内
+            location = []
+            area = cv2.contourArea(contour)
+            for j in range(4):
+                location.append((box[j][0],box[j][1]))
+            locations.append([location,area])
+            #绘制轮廓
+            cv2.drawContours(image, [approx], 0, (255, 0, 0), 2)
+
+    locations.sort(key=lambda x:x[1])
+    cv2.imshow('Image with Rec', image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    return locations
 
 def find_redpoint(image):
     """
@@ -172,8 +235,12 @@ def run():
     image = cv2.imread('./datas/1.png')
 
     # 寻找轮廓
-    warped = find_contours(image)
+    warped = warp_image(image, 'warp')
 
+    #寻找矩形框四个顶点位置
+    lacations = find_rec(warped)
+    print(lacations)
+    
     # 寻找红绿色点
     x_redpoint, y_redpoint = find_redpoint(warped)
     x_greenpoint, y_greenpoint = find_greenpoint(warped)
