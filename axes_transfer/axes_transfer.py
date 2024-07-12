@@ -8,8 +8,7 @@ class AxesTransfer:
     AxesTransfer class
     """
     def __init__(self):
-        self.src_points = []
-        self.dst_points = []
+        self.transformation_matrix = []
     def calculate_transformation_matrix(self,datas):
         VS_cal = vs()
         PWM1_1 = math.tan(datas[0]/10)
@@ -21,7 +20,7 @@ class AxesTransfer:
         src_points = [(PWM1_1, PWM1_2),(PWM2_1, PWM2_2)]
         dst_points = [point1,point2]
         T, residuals, rank, s = np.linalg.lstsq(src_points, dst_points, rcond=None)
-        return T
+        self.transformation_matrix = T
 
 
 # Example usage:

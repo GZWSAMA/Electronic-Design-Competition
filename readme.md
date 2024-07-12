@@ -20,7 +20,8 @@ python == 3.10.11
 
 # 快速开始
 ```shell
-视觉检测：python main.py
+运行主程序：python main.py
+视觉检测测试：python test.py
 hsv校准：python ./general/hsv_calibration.py
 空间变换矩阵求解：python ./axes_transfer/axes_transfer.py
 ```

@@ -22,6 +22,7 @@ class VisionDetection:
         self.rec_loc = []
         self.redpoint_loc  = []
         self.greenpoint_loc  = []
+        self.center_loc = []
 
         
     def order_points(self, pts):
@@ -172,11 +173,12 @@ class VisionDetection:
                 cv2.drawContours(image, [approx], 0, (255, 0, 0), 2)
 
         locations.sort(key=lambda x:x[1])
+        flattened_coordinates = [num for loc in locations for coord in loc[0] for num in coord]
         if(self.mode == 'test'):
             cv2.imshow('Image with Rec', image)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
-        self.rec_loc = locations
+        self.rec_loc = flattened_coordinates
  
     def find_redpoint(self, image):
         """
@@ -257,3 +259,6 @@ class VisionDetection:
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
             self.greenpoint_loc = (x_percent, y_percent)
+    
+    def find_center(self):
+        self.center_loc = [(self.rec_loc[0]+self.rec_loc[5])/2,(self.rec_loc[1]+self.rec_loc[6])/2]
