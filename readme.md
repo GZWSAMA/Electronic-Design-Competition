@@ -24,4 +24,5 @@ python == 3.10.11
 视觉检测测试：python test.py
 hsv校准：python ./general/hsv_calibration.py
 空间变换矩阵求解：python ./axes_transfer/axes_transfer.py
+测试uart： python ./uart_test.py
 ```
