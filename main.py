@@ -9,12 +9,27 @@ from axes_transfer.axes_transfer import AxesTransfer as AX
 # G——绿点坐标
 # T——a4纸四顶点坐标
 # S——计算变换矩阵
+# C——计算中心点
 # 串口信息——指令+数据
 
 # 初始化串口
 ser = serial.Serial('COM3', 115200)  # 更改'COM3'为你的实际串口号
 
-import serial
+def capture_image():
+    # 检查摄像头是否成功打开
+    if not cap.isOpened():
+        print("无法打开摄像头")
+        exit()
+
+    # 读取一帧图像
+    ret, frame = cap.read()
+
+    # 检查是否成功读取帧
+    if not ret:
+        print("无法获取帧")
+        exit()
+
+    return frame
 
 def send_list_over_serial(data_list):
     try:
@@ -37,37 +52,49 @@ def send_list_over_serial(data_list):
     except Exception as e:
         print(f"发生错误: {e}")
 
-try:
-    vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图
-    ax = AX()
-    while True:
-        if ser.in_waiting > 0:
-            sent_datas = []
-            # 读取一行数据
-            line = ser.readline().decode('utf-8').strip()
-            # 分割数据，假设命令在第一个位置
-            parts = line.split()
-            command = parts[0]
-            data = ' '.join(parts[1:])
-            #传入数据为后续部分
+def run():
+    # 打开默认摄像头，通常索引为0
+    cap = cv2.VideoCapture(0)
 
-            # 读取图片
-            image = cv2.imread('./datas/1.png')
-            warped = vs.warp_image(image)
-            
-            # 根据命令调用相应的函数
-            if command == "R":
-                vs.find_redpoint(warped)
-                send_list_over_serial(vs.redpoint_loc)
-            elif command == "G":
-                vs.find_greenpoint(warped)
-                send_list_over_serial(vs.greenpoint_loc)
-            elif command == "T":
-                vs.find_rec(warped)
-                send_list_over_serial(vs.rec_loc)
-            elif command == "S":
-                ax.calculate_transformation_matrix(data)
-            else:
-                print(f"Invalid command{command}")
-except KeyboardInterrupt:
-    ser.close()
+    try:
+        vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图
+        ax = AX()
+        while True:
+            if ser.in_waiting > 0:
+                # 读取一行数据
+                line = ser.readline().decode('utf-8').strip()
+                # 分割数据，假设命令在第一个位置
+                parts = line.split()
+                command = parts[0]
+                data = ' '.join(parts[1:])
+                #传入数据为后续部分
+
+                # 读取图片
+                image = capture_image()
+                warped = vs.warp_image(image)
+                
+                # 根据命令调用相应的函数
+                if command == "R":
+                    vs.find_redpoint(warped)
+                    send_list_over_serial(vs.redpoint_loc)
+                elif command == "G":
+                    vs.find_greenpoint(warped)
+                    send_list_over_serial(vs.greenpoint_loc)
+                elif command == "T":
+                    vs.find_rec(warped)
+                    send_list_over_serial(vs.rec_loc)
+                elif command == "S":
+                    ax.calculate_transformation_matrix(data)
+                elif command == "C":
+                    vs.find_center(warped)
+                    send_list_over_serial(vs.center_loc)
+                else:
+                    print(f"Invalid command{command}")
+    except KeyboardInterrupt:
+        ser.close()
+
+        # 释放摄像头资源
+        cap.release()
+
+if __name__ == "__main__":
+    run()
