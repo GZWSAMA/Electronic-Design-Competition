@@ -18,6 +18,7 @@ class VisionDetection:
         mode: 模式，test表示测试模式（展示效果图），run表示运行模式（不展示效果图）
     """
     def __init__(self, mode='test'):
+        self.area_threshold = 10000
         self.mode = mode
         self.rec_loc = []
         self.redpoint_loc  = []
@@ -155,7 +156,7 @@ class VisionDetection:
         # 遍历所有轮廓
         for i, contour in enumerate(contours):
             # 近似轮廓，减少顶点数量
-            epsilon = 0.01 * cv2.arcLength(contour, True)
+            epsilon = 0.02 * cv2.arcLength(contour, True)
             approx = cv2.approxPolyDP(contour, epsilon, True)
             
             # 如果轮廓近似后有4个顶点，且面积大于某个阈值，则认为是矩形
@@ -174,9 +175,21 @@ class VisionDetection:
                 locations.append([location,area])
                 #绘制轮廓
                 cv2.drawContours(image, [approx], 0, (255, 0, 0), 2)
+                # cv2.imshow('Image with Rec', image)
+                # cv2.waitKey(0)
 
         locations.sort(key=lambda x:x[1])
-        flattened_coordinates = [num for loc in locations for coord in loc[0] for num in coord]
+        # 初始化一个空列表来保存最终保留的矩形
+        final_locations = []
+
+        # 遍历排序后的矩形列表
+        for i, (coords, area) in enumerate(locations):
+            # 检查当前矩形是否与之前保留的矩形面积相近
+            if not any(abs(area - other_area) < self.area_threshold for _, other_area in final_locations):
+                # 如果不相近，则保留当前矩形
+                final_locations.append((coords, area))
+
+        flattened_coordinates = [num for loc in final_locations for coord in loc[0] for num in coord]
         if(self.mode == 'test'):
             cv2.imshow('Image with Rec', image)
             cv2.waitKey(0)
