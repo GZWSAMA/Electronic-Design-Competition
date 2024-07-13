@@ -11,7 +11,7 @@ def send_list_over_serial(data_list):
             data_str = ','.join(map(str, data_list))
             
             # 将字符串编码为字节串
-            data_bytes = data_str.encode('utf-8')
+            data_bytes = (data_str + '\r\n').encode('utf-8')
             
             # 发送数据
             ser.write(data_bytes)
