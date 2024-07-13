@@ -44,9 +44,6 @@ def send_list_over_serial(data_list):
             # 发送数据
             ser.write(data_bytes)
             
-            # 关闭串口
-            ser.close()
-            
             print("数据发送成功")
     
     except Exception as e:
@@ -66,7 +63,7 @@ def run():
                 # 分割数据，假设命令在第一个位置
                 parts = line.split()
                 command = parts[0]
-                data = ' '.join(parts[1:])
+                data =parts[1:]
                 #传入数据为后续部分
 
                 # 读取图片
