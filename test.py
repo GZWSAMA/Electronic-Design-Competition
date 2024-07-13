@@ -19,10 +19,9 @@ def run():
     vs.find_greenpoint(warped)
     vs.find_center()
     print("rectangle: ")
-    print(len(vs.rec_loc))
     for i in range(0, len(vs.rec_loc), 8):
         print(vs.rec_loc[i:i+8])
-    print(f"redpoint: {vs.redpoint_loc} \ngreenpoint: {vs.greenpoint_loc} \ncenter: {vs.center_loc}")
+    print(f"\nredpoint: \n{vs.redpoint_loc} \n\ngreenpoint: \n{vs.greenpoint_loc} \n\ncenter: {vs.center_loc}")
 
 if __name__ == '__main__':
     run()
