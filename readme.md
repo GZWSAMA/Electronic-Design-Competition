@@ -1,3 +1,9 @@
+# 快速下载及更新代码
+```shell
+快速拉取代码：git clone git@github.com:GZWSAMA/Electronic-Design-Competition.git
+快速更新代码：git pull git@github.com:GZWSAMA/Electronic-Design-Competition.git
+```
+
 # 使用代码前请先安装依赖
 使用本项目前，请确保通过以下命令配置虚拟环境和安装所需依赖包：
 ```shell
