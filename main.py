@@ -73,18 +73,18 @@ def run():
                 # 根据命令调用相应的函数
                 if command == "R":
                     vs.find_redpoint(warped)
-                    send_list_over_serial(vs.redpoint_loc)
+                    send_list_over_serial(vs.float2int(vs.redpoint_loc))
                 elif command == "G":
                     vs.find_greenpoint(warped)
-                    send_list_over_serial(vs.greenpoint_loc)
+                    send_list_over_serial(vs.float2int(vs.greenpoint_loc))
                 elif command == "T":
                     vs.find_rec(warped)
-                    send_list_over_serial(vs.rec_loc)
+                    send_list_over_serial(vs.float2int(vs.rec_loc))
                 elif command == "S":
                     ax.calculate_transformation_matrix(data)
                 elif command == "C":
                     vs.find_center(warped)
-                    send_list_over_serial(vs.center_loc)
+                    send_list_over_serial(vs.float2int(vs.center_loc))
                 else:
                     print(f"Invalid command{command}")
     except KeyboardInterrupt:

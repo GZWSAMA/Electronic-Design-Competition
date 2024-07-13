@@ -24,7 +24,10 @@ class VisionDetection:
         self.greenpoint_loc  = []
         self.center_loc = []
 
-        
+    def float2int(self, point):
+        for i in range(len(point)):
+            point[i] = int(point[i] *1000)
+        return point
     def order_points(self, pts):
         """
         排序坐标点
@@ -221,7 +224,7 @@ class VisionDetection:
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
-            self.redpoint_loc = (x_percent, y_percent)
+            self.redpoint_loc = [x_percent, y_percent]
 
     def find_greenpoint(self, image):
         """
@@ -258,7 +261,7 @@ class VisionDetection:
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
-            self.greenpoint_loc = (x_percent, y_percent)
+            self.greenpoint_loc = [x_percent, y_percent]
     
     def find_center(self):
         self.center_loc = [(self.rec_loc[0]+self.rec_loc[5])/2,(self.rec_loc[1]+self.rec_loc[6])/2]
