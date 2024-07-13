@@ -1,5 +1,8 @@
 import serial
 
+# 初始化串口
+ser = serial.Serial('COM3', 115200)  # 更改'COM3'为你的实际串口号
+
 def send_list_over_serial(data_list):
     try:
         if ser.isOpen():
@@ -22,7 +25,6 @@ def send_list_over_serial(data_list):
         print(f"发生错误: {e}")
 
 def run():
-
     try:
         while True:
             if ser.in_waiting > 0:
@@ -40,3 +42,7 @@ def run():
 
     except KeyboardInterrupt:
         ser.close()
+
+    
+if __name__ == "__main__":
+    run()
