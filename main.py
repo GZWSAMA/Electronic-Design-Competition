@@ -31,7 +31,7 @@ def capture_image():
 
     return frame
 
-def send_list_over_serial(data_list):
+def send_list_over_serial(command, data_list):
     try:
         if ser.isOpen():
             # 将列表转换为字符串，使用逗号作为分隔符
@@ -39,7 +39,7 @@ def send_list_over_serial(data_list):
             data_str = ','.join(map(str, data_list))
             
             # 将字符串编码为字节串
-            data_bytes = (data_str + '\r\n').encode('utf-8')
+            data_bytes = (command + data_str + '\r\n').encode('utf-8')
             
             # 发送数据
             ser.write(data_bytes)
@@ -73,18 +73,18 @@ def run():
                 # 根据命令调用相应的函数
                 if command == "R":
                     vs.find_redpoint(warped)
-                    send_list_over_serial(vs.float2int(vs.redpoint_loc))
+                    send_list_over_serial(command, vs.float2int(vs.redpoint_loc))
                 elif command == "G":
                     vs.find_greenpoint(warped)
-                    send_list_over_serial(vs.float2int(vs.greenpoint_loc))
+                    send_list_over_serial(command, vs.float2int(vs.greenpoint_loc))
                 elif command == "T":
                     vs.find_rec(warped)
-                    send_list_over_serial(vs.float2int(vs.rec_loc))
+                    send_list_over_serial(command, vs.float2int(vs.rec_loc))
                 elif command == "S":
-                    ax.calculate_transformation_matrix(data)
+                    ax.calculate_transformation_matrix(command, data)
                 elif command == "C":
                     vs.find_center(warped)
-                    send_list_over_serial(vs.float2int(vs.center_loc))
+                    send_list_over_serial(command, vs.float2int(vs.center_loc))
                 else:
                     print(f"Invalid command{command}")
     except KeyboardInterrupt:
