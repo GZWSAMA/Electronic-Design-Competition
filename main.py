@@ -12,9 +12,6 @@ from axes_transfer.axes_transfer import AxesTransfer as AX
 # C——计算中心点
 # 串口信息——指令+数据
 
-# 初始化串口
-ser = serial.Serial('COM3', 115200)  # 更改'COM3'为你的实际串口号
-
 def capture_image():
     # 检查摄像头是否成功打开
     if not cap.isOpened():
@@ -50,9 +47,6 @@ def send_list_over_serial(command, data_list):
         print(f"发生错误: {e}")
 
 def run():
-    # 打开默认摄像头，通常索引为0
-    cap = cv2.VideoCapture(0)
-
     try:
         vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图
         ax = AX()
@@ -94,4 +88,8 @@ def run():
         cap.release()
 
 if __name__ == "__main__":
+    # 初始化串口
+    ser = serial.Serial('COM3', 115200)  # 更改'COM3'为你的实际串口号
+    # 打开默认摄像头，通常索引为0
+    cap = cv2.VideoCapture(0)
     run()

@@ -24,6 +24,7 @@ class VisionDetection:
         self.redpoint_loc  = []
         self.greenpoint_loc  = []
         self.center_loc = []
+        self.result = None
 
     def float2int(self, point):
         for i in range(len(point)):
@@ -60,6 +61,7 @@ class VisionDetection:
         :param image: 待处理的图片
         :return: 透视变换后的图片
         """
+        warped = None
         # 转为灰度图
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -238,6 +240,7 @@ class VisionDetection:
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
             self.redpoint_loc = [x_percent, y_percent]
+            self.result = image
 
     def find_greenpoint(self, image):
         """
@@ -277,4 +280,8 @@ class VisionDetection:
             self.greenpoint_loc = [x_percent, y_percent]
     
     def find_center(self):
-        self.center_loc = [(self.rec_loc[0]+self.rec_loc[5])/2,(self.rec_loc[1]+self.rec_loc[6])/2]
+        if len(self.rec_loc) >= 7:
+           self.center_loc = [(self.rec_loc[0]+self.rec_loc[5])/2, (self.rec_loc[1]+self.rec_loc[6])/2]
+        else:
+           print("rec_loc does not have enough elements.")
+           self.center_loc = None
