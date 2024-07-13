@@ -19,9 +19,10 @@ def capture_image():
     return frame
 
 def run():
-    vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图
+    vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图中断程序
     while True:
         # 读取图片
+        # image = cv2.imread("./datas/2.png")
         image = capture_image()
         if image is None or image.size == 0:
             print("Image is empty!")
@@ -35,14 +36,19 @@ def run():
             print("warped is empty!")
             continue
         cv2.imshow("warped", warped)
-        
+        cv2.waitKey(10)
+
         #更新矩形框四个顶点位置
         lacations = vs.find_rec(warped)
         # 更新红绿色点位置
         vs.find_redpoint(warped)
         vs.find_greenpoint(warped)
         vs.find_center()
-        cv2.imshow("result", vs.result)
+        if vs.result is not None and vs.result.size > 0:
+            cv2.imshow("result", vs.result)
+        else:
+            print("vs.result is an empty image.")
+
         print("rectangle: ")
         for i in range(0, len(vs.rec_loc), 8):
             print(vs.rec_loc[i:i+8])

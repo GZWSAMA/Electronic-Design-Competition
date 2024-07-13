@@ -228,7 +228,7 @@ class VisionDetection:
             x_mean = np.mean(red_points[:, 1])
             y_mean = np.mean(red_points[:, 0])
             center = (int(x_mean), int(y_mean))
-            cv2.circle(image, center, radius=5, color=(0, 0, 255), thickness=-1)
+            cv2.circle(image, center, radius=5, color=(255, 0, 0), thickness=-1)
 
             if(self.mode == 'test'):
                 # 显示结果
@@ -266,7 +266,7 @@ class VisionDetection:
             x_mean = np.mean(green_points[:, 1])
             y_mean = np.mean(green_points[:, 0])
             center = (int(x_mean), int(y_mean))
-            cv2.circle(image, center, radius=5, color=(0, 0, 255), thickness=-1)
+            cv2.circle(image, center, radius=5, color=(255, 0, 0), thickness=-1)
 
             if(self.mode == 'test'):
                 # 显示结果
