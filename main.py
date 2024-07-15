@@ -50,7 +50,7 @@ def run():
     try:
         vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图
         ax = AX()
-        while vs.WH is None:#按下s键后计算M
+        while vs.WH is None:
             image = capture_image()
             vs.compute_M(image)
         while True:
@@ -65,6 +65,7 @@ def run():
 
                 # 读取图片
                 image = capture_image()
+                cv2.waitKey(10)
                 warped = vs.warp_image(image)
                 
                 # 根据命令调用相应的函数
