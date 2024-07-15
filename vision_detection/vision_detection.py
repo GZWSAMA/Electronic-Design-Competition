@@ -29,8 +29,11 @@ class VisionDetection:
         self.WH = None
 
     def float2int(self, point):
+        # 如果point是元组，则将其转换为列表
+        if isinstance(point, tuple):
+            point = list(point)
         for i in range(len(point)):
-            point[i] = int(point[i] *1000)
+            point[i] = int(point[i] * 1000)
         return point
     def order_points(self, pts):
         """
@@ -225,7 +228,7 @@ class VisionDetection:
             y_mean = np.mean(red_points[:, 0])
             center = (int(x_mean), int(y_mean))
             if self.mode == 'test':
-                cv2.circle(image, center, radius=5, color=(0, 255, 0), thickness=-1)
+                cv2.circle(image, center, radius=5, color=(0, 0, 255), thickness=-1)
 
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
@@ -258,12 +261,13 @@ class VisionDetection:
             y_mean = np.mean(green_points[:, 0])
             center = (int(x_mean), int(y_mean))
             if self.mode == 'test':
-                cv2.circle(image, center, radius=5, color=(0, 0, 255), thickness=-1)
+                cv2.circle(image, center, radius=5, color=(0, 255, 0), thickness=-1)
 
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
             self.greenpoint_loc = [x_percent, y_percent]
+            self.result = image
     
     def find_center(self):
         if len(self.rec_loc) >= 7:

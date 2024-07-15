@@ -97,7 +97,7 @@ def run():
 
 if __name__ == "__main__":
     # 初始化串口
-    ser = serial.Serial('COM3', 115200)  # 更改'COM3'为你的实际串口号
+    ser = serial.Serial('./dev/ttyTHS0', 9600) 
     # 打开默认摄像头，通常索引为0
     cap = cv2.VideoCapture(0)
     run()
