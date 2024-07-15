@@ -7,11 +7,18 @@
 # 使用代码前请先安装依赖
 使用本项目前，请确保通过以下命令配置虚拟环境和安装所需依赖包：
 ```shell
+(windows)
 pip install virtualenv
 virtualenv venv
 cd ./venv/Scripts
 activate
 cd ../..
+pip install -r requirements.txt
+
+(linux)
+pip install virtualenv
+virtualenv venv
+source ./venv/bin/activate
 pip install -r requirements.txt
 ```
 # 环境要求
