@@ -48,12 +48,35 @@ def send_list_over_serial(command, data_list):
 
 def run():
     try:
-        vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图
+        vs = VS(mode = 'test')#mode：test会产生效果图；run不会产生效果图
         ax = AX()
         while vs.WH is None:
             image = capture_image()
             vs.compute_M(image)
+            print("M未计算")
+
+        image = capture_image()
+        warped = vs.warp_image(image)
+        #更新矩形框四个顶点位置
+        lacations = vs.find_rec(warped)
+        vs.find_center()
+
         while True:
+            image = capture_image()
+            if image is None or image.size == 0:
+                print("Image is empty!")
+                continue
+            cv2.imshow("Image", image)
+            cv2.waitKey(10)
+            warped = vs.warp_image(image)
+            if warped is None or warped.size == 0:
+                print("warped is empty!")
+                continue
+            cv2.imshow("warped", warped)
+            cv2.waitKey(10)
+            # 更新红绿色点位置
+            vs.find_redpoint(warped)
+            vs.find_greenpoint(warped)
             if ser.in_waiting > 0:
                 # 读取一行数据
                 line = ser.readline().decode('utf-8').strip()
@@ -63,25 +86,21 @@ def run():
                 data =parts[1:]
                 #传入数据为后续部分
 
-                # 读取图片
-                image = capture_image()
-                cv2.waitKey(10)
-                warped = vs.warp_image(image)
+                # # 读取图片
+                # image = capture_image()
+                # cv2.waitKey(10)
+                # warped = vs.warp_image(image)
                 
                 # 根据命令调用相应的函数
                 if command == "R":
-                    vs.find_redpoint(warped)
                     send_list_over_serial(command, vs.float2int(vs.redpoint_loc))
                 elif command == "G":
-                    vs.find_greenpoint(warped)
                     send_list_over_serial(command, vs.float2int(vs.greenpoint_loc))
                 elif command == "T":
-                    vs.find_rec(warped)
                     send_list_over_serial(command, vs.float2int(vs.rec_loc))
                 elif command == "S":
                     ax.calculate_transformation_matrix(command, data)
                 elif command == "C":
-                    vs.find_center(warped)
                     send_list_over_serial(command, vs.float2int(vs.center_loc))
                 else:
                     print(f"Invalid command{command}")
