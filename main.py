@@ -50,6 +50,9 @@ def run():
     try:
         vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图
         ax = AX()
+        while vs.WH is None:#按下s键后计算M
+            image = capture_image()
+            vs.compute_M(image)
         while True:
             if ser.in_waiting > 0:
                 # 读取一行数据

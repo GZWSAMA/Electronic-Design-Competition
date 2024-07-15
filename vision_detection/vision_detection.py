@@ -25,6 +25,8 @@ class VisionDetection:
         self.greenpoint_loc  = []
         self.center_loc = []
         self.result = None
+        self.M = None
+        self.WH = None
 
     def float2int(self, point):
         for i in range(len(point)):
@@ -55,11 +57,11 @@ class VisionDetection:
         # 返回排序后的坐标点
         return rect
 
-    def warp_image(self, image):
+    def compute_M(self, image):
         """
-        寻找轮廓
+        计算透视变换矩阵
         :param image: 待处理的图片
-        :return: 透视变换后的图片
+        :return: 透视变换矩阵
         """
         warped = None
         # 转为灰度图
@@ -100,6 +102,8 @@ class VisionDetection:
                 heightB = np.sqrt(((box[1][0] - box[2][0]) ** 2) + ((box[1][1] - box[2][1]) ** 2))
                 maxHeight = max(int(heightA), int(heightB))
 
+                self.WH = [maxWidth, maxHeight]
+
                 # 定义目标点，这里我们增加一些额外的空间，但要确保比例正确
                 # 假设你想在每个边上增加10%的空间
                 extraSpace = -0.05  # 5% extra space
@@ -115,14 +119,16 @@ class VisionDetection:
                 ], dtype="float32")
 
                 # 计算透视变换矩阵
-                M = cv2.getPerspectiveTransform(box, dst_pts)
+                self.M = cv2.getPerspectiveTransform(box, dst_pts)
 
-                # 执行透视变换
-                warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
-
-
-                #绘制轮廓
-                cv2.drawContours(image, [approx], 0, (255, 0, 0), 2)
+    def warp_image(self, image):
+        """
+        寻找轮廓
+        :param image: 待处理的图片
+        :return: 透视变换后的图片
+        """
+        # 执行透视变换
+        warped = cv2.warpPerspective(image, self.M, (self.WH[0], self.WH[1]))
         
         if(self.mode == 'test'):
             # 显示结果

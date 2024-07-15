@@ -35,6 +35,7 @@ python == 3.10.11
 ```shell
 运行主程序：python main.py
 视觉检测测试：python test.py
+（按下s进行M计算，后续步骤均按照初始化M进行）
 hsv校准：python ./general/hsv_calibration.py
 空间变换矩阵求解：python ./axes_transfer/axes_transfer.py
 测试uart： python ./uart_test.py
