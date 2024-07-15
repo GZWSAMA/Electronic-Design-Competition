@@ -130,13 +130,6 @@ class VisionDetection:
         # 执行透视变换
         warped = cv2.warpPerspective(image, self.M, (self.WH[0], self.WH[1]))
         
-        if(self.mode == 'test'):
-            # 显示结果
-            # cv2.imshow('thresh Image', thresh)
-            cv2.imshow('Detected Rectangles', image)
-            cv2.imshow("Warped", warped)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
         return warped
 
     def find_rec(self, image):
@@ -182,7 +175,8 @@ class VisionDetection:
                     location.append((box[j][1] / image.shape[1], box[j][0] / image.shape[0]))
                 locations.append([location,area])
                 #绘制轮廓
-                cv2.drawContours(image, [approx], 0, (255, 0, 0), 1)
+                if self.mode == 'test':
+                    cv2.drawContours(image, [approx], 0, (255, 0, 0), 1)
                 # cv2.imshow('Image with Rec', image)
                 # cv2.waitKey(0)
 
@@ -198,10 +192,6 @@ class VisionDetection:
                 final_locations.append((coords, area))
 
         flattened_coordinates = [num for loc in final_locations for coord in loc[0] for num in coord]
-        if(self.mode == 'test'):
-            cv2.imshow('Image with Rec', image)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
         self.rec_loc = flattened_coordinates
  
     def find_redpoint(self, image):
@@ -234,13 +224,8 @@ class VisionDetection:
             x_mean = np.mean(red_points[:, 1])
             y_mean = np.mean(red_points[:, 0])
             center = (int(x_mean), int(y_mean))
-            cv2.circle(image, center, radius=5, color=(255, 0, 0), thickness=-1)
-
-            if(self.mode == 'test'):
-                # 显示结果
-                cv2.imshow('Original Image with Red Circles', image)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+            if self.mode == 'test':
+                cv2.circle(image, center, radius=5, color=(255, 0, 0), thickness=-1)
 
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
@@ -272,13 +257,8 @@ class VisionDetection:
             x_mean = np.mean(green_points[:, 1])
             y_mean = np.mean(green_points[:, 0])
             center = (int(x_mean), int(y_mean))
-            cv2.circle(image, center, radius=5, color=(255, 0, 0), thickness=-1)
-
-            if(self.mode == 'test'):
-                # 显示结果
-                cv2.imshow('Original Image with Green Circles', image)
-                cv2.waitKey(0)
-                cv2.destroyAllWindows()
+            if self.mode == 'test':
+                cv2.circle(image, center, radius=5, color=(255, 0, 0), thickness=-1)
 
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]

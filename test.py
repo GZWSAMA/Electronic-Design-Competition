@@ -19,7 +19,7 @@ def capture_image():
 
     return frame
 
-vs = VS(mode = 'run')#mode：test会产生效果图；run不会产生效果图中断程序
+vs = VS(mode = 'test')#mode：test会产生效果图；run不会产生效果图中断程序
 
 def on_compute():
     image = capture_image()
