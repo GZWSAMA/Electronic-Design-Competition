@@ -47,8 +47,9 @@ def send_list_over_serial(command, data_list):
         print(f"发生错误: {e}")
 
 def run():
+    mode = 'test'
     try:
-        vs = VS(mode = 'test')#mode：test会产生效果图；run不会产生效果图
+        vs = VS(mode = mode)#mode：test会产生效果图；run不会产生效果图
         ax = AX()
         while vs.WH is None:
             image = capture_image()
@@ -72,15 +73,17 @@ def run():
             if warped is None or warped.size == 0:
                 print("warped is empty!")
                 continue
-            cv2.imshow("warped", warped)
-            cv2.waitKey(10)
+            if mode == 'test':
+                cv2.imshow("warped", warped)
+                cv2.waitKey(10)
             # 更新红绿色点位置
             vs.find_redpoint(warped)
             vs.find_greenpoint(warped)
-            if vs.result is not None and vs.result.size > 0:
-                cv2.imshow("result", vs.result)
-            else:
-                print("vs.result is an empty image.")
+            if mode == 'test':
+                if vs.result is not None and vs.result.size > 0:
+                    cv2.imshow("result", vs.result)
+                else:
+                    print("vs.result is an empty image.")
             if ser.in_waiting > 0:
                 # 读取一行数据
                 line = ser.readline().decode('utf-8').strip()

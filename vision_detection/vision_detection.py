@@ -18,7 +18,7 @@ class VisionDetection:
         mode: 模式，test表示测试模式（展示效果图），run表示运行模式（不展示效果图）
     """
     def __init__(self, mode='test'):
-        self.area_threshold = 10000
+        self.area_threshold = 5000
         self.mode = mode
         self.rec_loc = []
         self.redpoint_loc  = []
