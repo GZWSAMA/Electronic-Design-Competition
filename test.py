@@ -34,9 +34,11 @@ def run():
     #         continue
     #     cv2.imshow("image", image)
     #     cv2.waitKey(10)
-    
+
     while vs.WH is None:
         image = capture_image()
+        cv2.imshow("image", image)
+        cv2.waitKey(10)
         vs.compute_M(image)
 
     while True:
