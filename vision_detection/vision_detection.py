@@ -182,7 +182,7 @@ class VisionDetection:
                     location.append((box[j][1] / image.shape[1], box[j][0] / image.shape[0]))
                 locations.append([location,area])
                 #绘制轮廓
-                cv2.drawContours(image, [approx], 0, (255, 0, 0), 2)
+                cv2.drawContours(image, [approx], 0, (255, 0, 0), 1)
                 # cv2.imshow('Image with Rec', image)
                 # cv2.waitKey(0)
 
