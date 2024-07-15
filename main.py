@@ -77,6 +77,10 @@ def run():
             # 更新红绿色点位置
             vs.find_redpoint(warped)
             vs.find_greenpoint(warped)
+            if vs.result is not None and vs.result.size > 0:
+                cv2.imshow("result", vs.result)
+            else:
+                print("vs.result is an empty image.")
             if ser.in_waiting > 0:
                 # 读取一行数据
                 line = ser.readline().decode('utf-8').strip()
