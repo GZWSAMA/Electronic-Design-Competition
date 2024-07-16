@@ -226,7 +226,7 @@ class VisionDetection:
         red_points = np.column_stack(np.where(mask > 0))
 
         if red_points.size == 0:
-            self.redpoint_loc = (0.0, 0.0)
+            redpoint = [0.0, 0.0]
         else:
             #此处已经进行x，y坐标交换
             x_mean = np.mean(red_points[:, 1])
@@ -238,13 +238,14 @@ class VisionDetection:
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
-            if len(self.redpoint_loc) >= 8:
-                # 删除最旧的一组数据
-                self.redpoint_loc.pop(0)
-    
-            # 添加新的坐标对
-            self.redpoint_loc.append([x_percent, y_percent])
-            self.result = image
+            redpoint = [x_percent, y_percent]
+        if len(self.redpoint_loc) >= 8:
+            # 删除最旧的一组数据
+            self.redpoint_loc.pop(0)
+
+        # 添加新的坐标对
+        self.redpoint_loc.append(redpoint)
+        self.result = image
 
     def find_greenpoint(self, image):
         """
@@ -264,7 +265,7 @@ class VisionDetection:
         green_points = np.column_stack(np.where(mask > 0))
 
         if green_points.size == 0:
-            self.greenpoint_loc = (0.0, 0.0)
+            greenpoint = [0.0, 0.0]
         else:
             #此处已经进行x，y坐标交换
             x_mean = np.mean(green_points[:, 1])
@@ -276,13 +277,14 @@ class VisionDetection:
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
-            if len(self.greenpoint_loc) >= 8:
-                # 删除最旧的一组数据
-                self.greenpoint_loc.pop(0)
-    
-            # 添加新的坐标对
-            self.greenpoint_loc.append([x_percent, y_percent])
-            self.result = image
+            greenpoint = [x_percent, y_percent]
+        if len(self.greenpoint_loc) >= 8:
+            # 删除最旧的一组数据
+            self.greenpoint_loc.pop(0)
+
+        # 添加新的坐标对
+        self.greenpoint_loc.append(greenpoint)
+        self.result = image
     
     def find_center(self):
         if len(self.rec_loc) >= 7:
