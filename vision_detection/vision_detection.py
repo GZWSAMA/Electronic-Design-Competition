@@ -29,6 +29,7 @@ class VisionDetection:
         self.WH = None
 
     def select_point(self, points):
+        final_point = [0.0, 0.0]
         for i in range(len(points)):
             if points[len(points)-1 - i][0] != 0.0 or points[len(points)-1 - i][1] != 0.0:
                 final_point = points[len(points)-1 - i]
