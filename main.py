@@ -100,9 +100,9 @@ def run():
                 
                 # 根据命令调用相应的函数
                 if command == "R":
-                    send_list_over_serial(command, vs.float2int(vs.redpoint_loc))
+                    send_list_over_serial(command, vs.float2int(vs.select_point(vs.redpoint_loc)))
                 elif command == "G":
-                    send_list_over_serial(command, vs.float2int(vs.greenpoint_loc))
+                    send_list_over_serial(command, vs.float2int(vs.select_point(vs.greenpoint_loc)))
                 elif command == "T":
                     send_list_over_serial(command, vs.float2int(vs.rec_loc))
                 elif command == "S":

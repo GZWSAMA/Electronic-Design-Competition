@@ -28,6 +28,11 @@ class VisionDetection:
         self.M = None
         self.WH = None
 
+    def select_point(self, points):
+        for i in range(len(points)):
+            if points[len(points)-1 - i][0] != 0.0 or points[len(points)-1 - i][1] != 0.0:
+                final_point = points[len(points)-1 - i]
+        return final_point
     def float2int(self, point):
         # 如果point是元组，则将其转换为列表
         if isinstance(point, tuple):
@@ -233,7 +238,12 @@ class VisionDetection:
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
-            self.redpoint_loc = [x_percent, y_percent]
+            if len(self.redpoint_loc) >= 8:
+                # 删除最旧的一组数据
+                self.redpoint_loc.pop(0)
+    
+            # 添加新的坐标对
+            self.redpoint_loc.append([x_percent, y_percent])
             self.result = image
 
     def find_greenpoint(self, image):
@@ -266,7 +276,12 @@ class VisionDetection:
             # 返回所有红点的平均位置
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
-            self.greenpoint_loc = [x_percent, y_percent]
+            if len(self.greenpoint_loc) >= 8:
+                # 删除最旧的一组数据
+                self.greenpoint_loc.pop(0)
+    
+            # 添加新的坐标对
+            self.greenpoint_loc.append([x_percent, y_percent])
             self.result = image
     
     def find_center(self):
