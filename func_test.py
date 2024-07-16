@@ -16,10 +16,15 @@ def draw_contours(image_path):
     
     # 边缘检测
     edges = cv2.Canny(blurred, 10, 50, apertureSize=3)
-    cv2.waitKey(0)
+
+    # 创建一个结构元素，通常是一个矩形或圆形
+    kernel = np.ones((3, 3), np.uint8)
+
+    # 使用dilate函数加粗边缘
+    dilated_edges = cv2.dilate(edges, kernel, iterations=1)
     
     # 查找轮廓
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(dilated_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     
     # 遍历每个轮廓
     for contour in contours:
@@ -38,4 +43,4 @@ def draw_contours(image_path):
     cv2.destroyAllWindows()
 
 # 使用图像路径调用函数
-draw_contours('./datas/2.jpg')
+draw_contours('./datas/3.jpg')

@@ -80,10 +80,15 @@ class VisionDetection:
         blurred = cv2.GaussianBlur(gray, (3, 3), 0)
         
         # 边缘检测
-        edges = cv2.Canny(blurred, 10, 50, apertureSize=3)
+        edges = cv2.Canny(blurred, 10, 40, apertureSize=3)
         
+        # 创建一个结构元素，通常是一个矩形或圆形
+        kernel = np.ones((3, 3), np.uint8)
+
+        # 使用dilate函数加粗边缘
+        dilated_edges = cv2.dilate(edges, kernel, iterations=1)
         # 查找轮廓
-        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(dilated_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
         # 遍历每个轮廓
         for contour in contours:
@@ -157,8 +162,14 @@ class VisionDetection:
         # 边缘检测，降低阈值以捕获更多细节
         edges = cv2.Canny(blurred, 10, 50, apertureSize=3) 
 
+        # 创建一个结构元素，通常是一个矩形或圆形
+        kernel = np.ones((3, 3), np.uint8)
+
+        # 使用dilate函数加粗边缘
+        dilated_edges = cv2.dilate(edges, kernel, iterations=1)
+
         # 寻找轮廓
-        contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(dilated_edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         # 遍历所有轮廓
         for i, contour in enumerate(contours):
