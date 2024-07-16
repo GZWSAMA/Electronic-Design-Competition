@@ -73,25 +73,22 @@ class VisionDetection:
         :return: 透视变换矩阵
         """
         warped = None
-        # 转为灰度图
+        # 将图像转换为灰度图
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-        # 二值化处理，将图像转换为黑白
-        _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-
-        # 高斯模糊减少噪声
-        blurred = cv2.GaussianBlur(image, (3, 3), 0)
-
-        # 边缘检测，降低阈值以捕获更多细节
-        edges = cv2.Canny(blurred, 50, 150)
-
-        # 寻找轮廓
+        
+        # 应用高斯模糊减少噪声
+        blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+        
+        # 边缘检测
+        edges = cv2.Canny(blurred, 10, 50, apertureSize=3)
+        
+        # 查找轮廓
         contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        # 遍历所有轮廓
+        
+        # 遍历每个轮廓
         for contour in contours:
-            # 近似轮廓，减少顶点数量
-            epsilon = 0.01 * cv2.arcLength(contour, True)
+            # 近似轮廓，使其更接近多边形
+            epsilon = 0.003 * cv2.arcLength(contour, True)
             approx = cv2.approxPolyDP(contour, epsilon, True)
             
             # 如果轮廓近似后有4个顶点，且面积大于某个阈值，则认为是矩形
@@ -158,7 +155,7 @@ class VisionDetection:
         blurred = cv2.GaussianBlur(image, (3, 3), 0)
 
         # 边缘检测，降低阈值以捕获更多细节
-        edges = cv2.Canny(blurred, 50, 150)
+        edges = cv2.Canny(blurred, 10, 50, apertureSize=3) 
 
         # 寻找轮廓
         contours, _ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -166,7 +163,7 @@ class VisionDetection:
         # 遍历所有轮廓
         for i, contour in enumerate(contours):
             # 近似轮廓，减少顶点数量
-            epsilon = 0.02 * cv2.arcLength(contour, True)
+            epsilon = 0.003 * cv2.arcLength(contour, True)
             approx = cv2.approxPolyDP(contour, epsilon, True)
             
             # 如果轮廓近似后有4个顶点，且面积大于某个阈值，则认为是矩形
@@ -292,4 +289,4 @@ class VisionDetection:
            self.center_loc = [(self.rec_loc[0]+self.rec_loc[5])/2, (self.rec_loc[1]+self.rec_loc[6])/2]
         else:
            print("rec_loc does not have enough elements.")
-           self.center_loc = None
+           self.center_loc = [0.0, 0.0]

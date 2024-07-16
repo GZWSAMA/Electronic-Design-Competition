@@ -1,50 +1,41 @@
 import cv2
 import numpy as np
 
-def find_contours(image):
+def draw_contours(image_path):
+    # 读取图像
+    image = cv2.imread(image_path)
+    if image is None:
+        print("Image not found.")
+        return
+    
     # 将图像转换为灰度图
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # 使用高斯模糊减少噪声
-    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    # 使用Canny边缘检测
-    edges = cv2.Canny(blurred, 50, 150)
+    
+    # 应用高斯模糊减少噪声
+    blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+    
+    # 边缘检测
+    edges = cv2.Canny(blurred, 10, 50, apertureSize=3)
+    cv2.waitKey(0)
+    
     # 查找轮廓
     contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # 筛选四边形轮廓
-    quadrilaterals = []
+    
+    # 遍历每个轮廓
     for contour in contours:
-        peri = cv2.arcLength(contour, True)
-        approx = cv2.approxPolyDP(contour, 0.02 * peri, True)
-        if len(approx) == 4:
-            quadrilaterals.append(approx)
-    return quadrilaterals
-
-def main():
-    cap = cv2.VideoCapture(0)
-    if not cap.isOpened():
-        print("无法打开摄像头")
-        exit()
-
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("无法获取帧")
-            break
+        # 近似轮廓，使其更接近多边形
+        epsilon = 0.003 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
         
-        # 找到四边形并绘制轮廓
-        quadrilaterals = find_contours(frame)
-        for quad in quadrilaterals:
-            cv2.drawContours(frame, [quad], -1, (0, 255, 0), 2)
-
-        # 显示结果
-        cv2.imshow('Quadrilateral Detection', frame)
-        
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-
-    # 释放资源
-    cap.release()
+        # 检查轮廓是否为四边形
+        if len(approx) == 4 and cv2.contourArea(contour) > 1000:
+            # 绘制轮廓
+            cv2.drawContours(image, [approx], -1, (0, 255, 0), 3)
+    
+    # 显示结果
+    cv2.imshow('Detected Quadrilaterals', image)
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-if __name__ == "__main__":
-    main()
+# 使用图像路径调用函数
+draw_contours('./datas/2.jpg')
