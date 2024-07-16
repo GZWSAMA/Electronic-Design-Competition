@@ -26,15 +26,6 @@ def on_compute():
     vs.compute_M(image)
 
 def run():
-    # keyboard.add_hotkey('s', on_compute)
-    # while vs.WH is None:#按下s进行M计算
-    #     image = capture_image()
-    #     if image is None or image.size == 0:
-    #         print("Image is empty!")
-    #         continue
-    #     cv2.imshow("image", image)
-    #     cv2.waitKey(10)
-
     while vs.WH is None:
         image = capture_image()
         cv2.imshow("image", image)
@@ -42,7 +33,7 @@ def run():
         vs.compute_M(image)
 
     while True:
-        # # 读取图片
+        # 读取图片
         # image = cv2.imread("./datas/2.png")
         # vs.compute_M(image)
 
@@ -75,7 +66,7 @@ def run():
         print("rectangle: ")
         for i in range(0, len(vs.rec_loc), 8):
             print(vs.rec_loc[i:i+8])
-        print(f"\nredpoint: \n{vs.float2int(vs.redpoint_loc)} \n\ngreenpoint: \n{vs.float2int(vs.greenpoint_loc)} \n\ncenter: {vs.float2int(vs.center_loc)}")
+        print(f"\nredpoint: \n{vs.float2int(vs.select_point(vs.redpoint_loc))} \n\ngreenpoint: \n{vs.float2int(vs.select_point(vs.greenpoint_loc))} \n\ncenter: {vs.float2int(vs.center_loc)}")
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
