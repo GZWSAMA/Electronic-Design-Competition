@@ -19,6 +19,7 @@ class VisionDetection:
     """
     def __init__(self, mode='test'):
         self.area_threshold = 5000
+        self.frame_threshold = 10
         self.mode = mode
         self.rec_loc = []
         self.redpoint_loc  = []
@@ -248,7 +249,7 @@ class VisionDetection:
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
             redpoint = [x_percent, y_percent]
-        if len(self.redpoint_loc) >= 8:
+        if len(self.redpoint_loc) >= self.frame_threshold:
             # 删除最旧的一组数据
             self.redpoint_loc.pop(0)
 
@@ -287,7 +288,7 @@ class VisionDetection:
             x_percent = x_mean / image.shape[1]
             y_percent = y_mean / image.shape[0]
             greenpoint = [x_percent, y_percent]
-        if len(self.greenpoint_loc) >= 8:
+        if len(self.greenpoint_loc) >= self.frame_threshold:
             # 删除最旧的一组数据
             self.greenpoint_loc.pop(0)
 
