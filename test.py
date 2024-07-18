@@ -35,7 +35,7 @@ def run():
 
     while True:
         #读取图片
-        image = cv2.imread("./datas/8.jpg")
+        image = cv2.imread("./datas/9.jpg")
         while vs.WH is None:
             vs.compute_M(image)
             print("WH is None")
