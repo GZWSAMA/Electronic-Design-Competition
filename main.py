@@ -61,6 +61,8 @@ def run():
         #更新矩形框四个顶点位置
         lacations = vs.find_rec(warped)
         vs.find_center()
+        rec_int = vs.float2int(vs.rec_loc)
+        center_int = vs.float2int(vs.center_loc)
 
         while True:
             image = capture_image()
@@ -104,11 +106,11 @@ def run():
                 elif command == "G":
                     send_list_over_serial(command, vs.float2int(vs.select_point(vs.greenpoint_loc)))
                 elif command == "T":
-                    send_list_over_serial(command, vs.float2int(vs.rec_loc))
+                    send_list_over_serial(command, rec_int)
                 elif command == "S":
                     ax.calculate_transformation_matrix(command, data)
                 elif command == "C":
-                    send_list_over_serial(command, vs.float2int(vs.center_loc))
+                    send_list_over_serial(command, center_int)
                 else:
                     print(f"Invalid command{command}")
     except KeyboardInterrupt:
