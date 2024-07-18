@@ -18,7 +18,7 @@ class VisionDetection:
         mode: 模式，test表示测试模式（展示效果图），run表示运行模式（不展示效果图）
     """
     def __init__(self, mode='test'):
-        self.area_threshold = 5000
+        self.area_threshold = 20000
         self.frame_threshold = 10
         self.mode = mode
         self.rec_loc = []
@@ -75,19 +75,13 @@ class VisionDetection:
         """
         warped = None
         # 将图像转换为灰度图
-        # 设置对比度和亮度
-        alpha = 0.5  # 对比度
-        beta = 100    # 亮度
-
-        # 应用线性变换
-        new_img = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         
         # 应用高斯模糊减少噪声
-        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+        blurred = cv2.GaussianBlur(gray, (7, 7), 0)
         
         # 边缘检测
-        edges = cv2.Canny(blurred, 8, 40, apertureSize=3)
+        edges = cv2.Canny(blurred, 25, 120, apertureSize=3)
         if self.mode == 'test':
             cv2.namedWindow('edges', cv2.WINDOW_NORMAL)
             cv2.namedWindow('dilated_edges', cv2.WINDOW_NORMAL)
@@ -169,15 +163,14 @@ class VisionDetection:
         # 转为灰度图
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-
         # 高斯模糊减少噪声
         blurred = cv2.GaussianBlur(image, (5, 5), 0)
 
         # 边缘检测，降低阈值以捕获更多细节
-        edges = cv2.Canny(blurred, 8, 40, apertureSize=3) 
+        edges = cv2.Canny(blurred, 25, 120, apertureSize=3) 
 
         # 创建一个结构元素，通常是一个矩形或圆形
-        kernel = np.ones((3, 3), np.uint8)
+        kernel = np.ones((5, 5), np.uint8)
 
         # 使用dilate函数加粗边缘
         dilated_edges = cv2.dilate(edges, kernel, iterations=1)
