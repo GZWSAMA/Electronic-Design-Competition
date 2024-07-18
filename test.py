@@ -26,20 +26,21 @@ def on_compute():
     vs.compute_M(image)
 
 def run():
-    # while vs.WH is None:
-    #     image = capture_image()
-    #     cv2.imshow("image", image)
-    #     cv2.waitKey(10)
-    #     vs.compute_M(image)
+    while vs.WH is None:
+        image = capture_image()
+        cv2.imshow("image", image)
+        cv2.waitKey(10)
+        vs.compute_M(image)
+        print("WH is None")
 
     while True:
-        #读取图片
-        image = cv2.imread("./datas/2.png")
-        while vs.WH is None:
-            vs.compute_M(image)
-            print("WH is None")
+        # #读取图片
+        # image = cv2.imread("./datas/4.jpg")
+        # while vs.WH is None:
+        #     vs.compute_M(image)
+        #     print("WH is None")
 
-        # image = capture_image()
+        image = capture_image()
         if image is None or image.size == 0:
             print("Image is empty!")
             continue

@@ -75,19 +75,34 @@ class VisionDetection:
         """
         warped = None
         # 将图像转换为灰度图
+        # 设置对比度和亮度
+        alpha = 0.5  # 对比度
+        beta = 100    # 亮度
+
+        # 应用线性变换
+        new_img = cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         
         # 应用高斯模糊减少噪声
-        blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         
         # 边缘检测
-        edges = cv2.Canny(blurred, 10, 40, apertureSize=3)
+        edges = cv2.Canny(blurred, 8, 40, apertureSize=3)
+        if self.mode == 'test':
+            cv2.namedWindow('edges', cv2.WINDOW_NORMAL)
+            cv2.namedWindow('dilated_edges', cv2.WINDOW_NORMAL)
+            cv2.imshow("edges", edges)
+            cv2.waitKey(10)
         
         # 创建一个结构元素，通常是一个矩形或圆形
-        kernel = np.ones((3, 3), np.uint8)
+        kernel = np.ones((4, 4), np.uint8)
 
         # 使用dilate函数加粗边缘
         dilated_edges = cv2.dilate(edges, kernel, iterations=1)
+        if self.mode == 'test':
+            cv2.imshow("dilated_edges", dilated_edges)
+            cv2.waitKey(10)
+            
         # 查找轮廓
         contours, _ = cv2.findContours(dilated_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
@@ -154,14 +169,12 @@ class VisionDetection:
         # 转为灰度图
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
-        # 二值化处理，将图像转换为黑白
-        _, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
         # 高斯模糊减少噪声
-        blurred = cv2.GaussianBlur(image, (3, 3), 0)
+        blurred = cv2.GaussianBlur(image, (5, 5), 0)
 
         # 边缘检测，降低阈值以捕获更多细节
-        edges = cv2.Canny(blurred, 10, 50, apertureSize=3) 
+        edges = cv2.Canny(blurred, 8, 40, apertureSize=3) 
 
         # 创建一个结构元素，通常是一个矩形或圆形
         kernel = np.ones((3, 3), np.uint8)
