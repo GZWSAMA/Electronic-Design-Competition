@@ -17,7 +17,7 @@ class VisionDetection:
     Agruments:
         mode: 模式，test表示测试模式（展示效果图），run表示运行模式（不展示效果图）
     """
-    def __init__(self, mode='test'):
+    def __init__(self, mode='test', blurred_para = 5, edge_para = 120):
         self.area_threshold = 25000
         self.frame_threshold = 10
         self.mode = mode
@@ -28,8 +28,8 @@ class VisionDetection:
         self.result = None
         self.M = None
         self.WH = None
-        self.blurred_para = 5
-        self.edge_para = 120
+        self.blurred_para = blurred_para
+        self.edge_para = edge_para
 
     def select_point(self, points):
         final_point = [0.0, 0.0]
@@ -80,10 +80,10 @@ class VisionDetection:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         
         # 应用高斯模糊减少噪声
-        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+        blurred = cv2.GaussianBlur(gray, (self.blurred_para, self.blurred_para), 0)
         
         # 边缘检测
-        edges = cv2.Canny(blurred, 25, 120, apertureSize=3)
+        edges = cv2.Canny(blurred, 25, self.edge_para, apertureSize=3)
         if self.mode == 'test':
             cv2.namedWindow('edges', cv2.WINDOW_NORMAL)
             cv2.namedWindow('dilated_edges', cv2.WINDOW_NORMAL)
@@ -166,10 +166,10 @@ class VisionDetection:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # 高斯模糊减少噪声
-        blurred = cv2.GaussianBlur(image, (5, 5), 0)
+        blurred = cv2.GaussianBlur(image, (self.blurred_para, self.blurred_para), 0)
 
         # 边缘检测，降低阈值以捕获更多细节
-        edges = cv2.Canny(blurred, 25, 120, apertureSize=3) 
+        edges = cv2.Canny(blurred, 25, self.edge_para, apertureSize=3) 
 
         # 创建一个结构元素，通常是一个矩形或圆形
         kernel = np.ones((6, 6), np.uint8)
