@@ -18,7 +18,7 @@ class VisionDetection:
         mode: 模式，test表示测试模式（展示效果图），run表示运行模式（不展示效果图）
     """
     def __init__(self, mode='test'):
-        self.area_threshold = 20000
+        self.area_threshold = 25000
         self.frame_threshold = 10
         self.mode = mode
         self.rec_loc = []
@@ -28,6 +28,8 @@ class VisionDetection:
         self.result = None
         self.M = None
         self.WH = None
+        self.blurred_para = 5
+        self.edge_para = 120
 
     def select_point(self, points):
         final_point = [0.0, 0.0]
@@ -89,7 +91,7 @@ class VisionDetection:
             cv2.waitKey(10)
         
         # 创建一个结构元素，通常是一个矩形或圆形
-        kernel = np.ones((4, 4), np.uint8)
+        kernel = np.ones((6, 6), np.uint8)
 
         # 使用dilate函数加粗边缘
         dilated_edges = cv2.dilate(edges, kernel, iterations=1)
@@ -170,7 +172,7 @@ class VisionDetection:
         edges = cv2.Canny(blurred, 25, 120, apertureSize=3) 
 
         # 创建一个结构元素，通常是一个矩形或圆形
-        kernel = np.ones((5, 5), np.uint8)
+        kernel = np.ones((6, 6), np.uint8)
 
         # 使用dilate函数加粗边缘
         dilated_edges = cv2.dilate(edges, kernel, iterations=1)
