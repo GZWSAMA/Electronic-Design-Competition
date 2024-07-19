@@ -166,7 +166,7 @@ class VisionDetection:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         # 高斯模糊减少噪声
-        blurred = cv2.GaussianBlur(image, (self.blurred_para, self.blurred_para), 0)
+        blurred = cv2.GaussianBlur(gray, (self.blurred_para, self.blurred_para), 0)
 
         # 边缘检测，降低阈值以捕获更多细节
         edges = cv2.Canny(blurred, 25, self.edge_para, apertureSize=3) 
